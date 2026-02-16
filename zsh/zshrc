@@ -1,0 +1,123 @@
+# Homebrew shellenv (architecture-aware)
+if [[ "$(uname -m)" == "arm64" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+else
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# makes color constants available
+autoload -U colors
+colors
+
+# Completions
+fpath=($(brew --prefix)/share/zsh-completions $fpath)
+
+HISTFILE=~/.histfile
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_ALL_DUPS
+setopt SHARE_HISTORY
+setopt INC_APPEND_HISTORY
+
+autoload -Uz compinit
+compinit
+
+if [ -e "${HOME}/.zsh/completion.zsh" ]; then
+   source "${HOME}/.zsh/completion.zsh"
+fi
+
+# why would you type 'cd dir' if you could just type 'dir'?
+setopt AUTO_CD
+
+# Now we can pipe to multiple outputs!
+setopt MULTIOS
+
+# This makes cd=pushd
+setopt AUTO_PUSHD
+
+# This will use named dirs when possible
+setopt AUTO_NAME_DIRS
+
+# If we have a glob this will expand it
+setopt GLOB_COMPLETE
+setopt PUSHD_MINUS
+
+# blank pushd goes to home
+setopt PUSHD_TO_HOME
+
+# this will ignore multiple directories for the stack.
+setopt PUSHD_IGNORE_DUPS
+
+# 10 second wait if you do something that will delete everything.
+setopt RM_STAR_WAIT
+
+# use magic (this is default, but it can't hurt!)
+setopt ZLE
+
+setopt NO_HUP
+
+# only fools wouldn't do this ;-)
+export EDITOR="subl -n -w"
+
+setopt IGNORE_EOF
+
+# If I could disable Ctrl-s completely I would!
+setopt NO_FLOW_CONTROL
+
+# Keep echo "station" > station from clobbering station
+setopt NO_CLOBBER
+
+# Case insensitive globbing
+setopt NO_CASE_GLOB
+
+# Be Reasonable!
+setopt NUMERIC_GLOB_SORT
+
+# I don't know why I never set this before.
+setopt EXTENDED_GLOB
+
+# hows about arrays be awesome?
+setopt RC_EXPAND_PARAM
+
+# enable colored output from ls, etc
+export CLICOLOR=1
+
+# expand functions in the prompt
+setopt prompt_subst
+
+bindkey "\eOP" run-help
+
+# oh wow!  This is killer...  try it!
+bindkey -M vicmd "q" push-line
+
+# it's like, space AND completion.  Gnarlbot.
+bindkey -M viins ' ' magic-space
+
+if [ -e "$HOME/.aliases" ]; then
+  source "$HOME/.aliases"
+fi
+
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+
+# mise (version manager)
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
+# fzf
+if command -v fzf &>/dev/null; then
+  source <(fzf --zsh)
+fi
+
+# zoxide (smart cd)
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+
+# starship prompt (must be last)
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
+fi

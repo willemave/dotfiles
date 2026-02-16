@@ -1,0 +1,174 @@
+# Skip forward/back a word with opt-arrow
+bindkey -e
+
+bindkey '[C' forward-word
+bindkey '[D' backward-word
+
+# Skip to start/end of line with cmd-arrow
+bindkey '[E' beginning-of-line
+bindkey '[F' end-of-line
+
+# Delete word with opt-backspace/opt-delete
+bindkey '[G' backward-kill-word
+bindkey '[H' kill-word
+
+# Delete line with cmd-backspace
+bindkey '[I' kill-whole-line
+
+# Git aliases
+alias gfa='git fetch --all'
+compdef gfa=git
+alias g='git'
+compdef g=git
+alias gst='git status -uno'
+compdef _git gst=git-status
+alias gd='git diff'
+compdef _git gd=git-diff
+alias gdi='git di'
+compdef _git gdi=git-diff
+alias gdc='git diff --cached'
+compdef _git gdc=git-diff
+alias gpl='git pl'
+compdef _git gpl=git-pull
+alias gup='git pull --rebase'
+compdef _git gup=git-fetch
+alias gp='git push'
+compdef _git gp=git-push
+alias gpf='git push --force-with-lease'
+compdef _git gpf=git-push
+gdv() { git diff -w "$@" | view - }
+compdef _git gdv=git-diff
+alias gc='git commit -v'
+compdef _git gc=git-commit
+alias gc!='git commit -v --amend'
+compdef _git gc!=git-commit
+alias gca='git commit -v -a'
+compdef _git gca=git-commit
+alias gca!='git commit -v -a --amend'
+compdef _git gca!=git-commit
+alias gcmsg='git commit -m'
+compdef _git gcmsg=git-commit
+alias gco='git checkout'
+compdef _git gco=git-checkout
+alias gsw='git switch'
+compdef _git gsw=git-switch
+alias gr='git remote'
+compdef _git gr=git-remote
+alias grv='git remote -v'
+compdef _git grv=git-remote
+alias grmv='git remote rename'
+compdef _git grmv=git-remote
+alias grrm='git remote remove'
+compdef _git grrm=git-remote
+alias grset='git remote set-url'
+compdef _git grset=git-remote
+alias grup='git remote update'
+compdef _git grup=git-remote
+alias grbi='git rebase -i'
+compdef _git grbi=git-rebase
+alias grbc='git add --all . ; git rebase --continue'
+compdef _git grbc=git-rebase
+alias grba='git rebase --abort'
+compdef _git grba=git-rebase
+alias gb='git branch'
+compdef _git gb=git-branch
+alias gba='git branch -a'
+compdef _git gba=git-branch
+alias gcount='git shortlog -sn'
+compdef gcount=git
+alias gcl='git config --list'
+alias gcp='git cherry-pick'
+compdef _git gcp=git-cherry-pick
+alias gl='git l'
+compdef _git gl=git-log
+alias glg='git lg'
+compdef _git glg=git-log
+alias glgb='git lgb'
+compdef _git glgb=git-log
+alias ga='git add'
+compdef _git ga=git-add
+alias gm='git merge'
+compdef _git gm=git-merge
+alias grh='git reset HEAD'
+alias grhh='git reset HEAD --hard'
+alias gclean='git reset --hard && git clean -df'
+alias gwc='git whatchanged -p --abbrev-commit --pretty=medium'
+
+# Fetch and rebase on the main branch (auto-detect main/master)
+alias gfup='git fetch --all ; git rebase origin/$(git symbolic-ref refs/remotes/origin/HEAD | sed "s@^refs/remotes/origin/@@")'
+
+alias gpoat='git push origin --all && git push origin --tags'
+alias gmt='git mergetool --no-prompt'
+compdef _git gmt=git-mergetool
+
+alias gsts='git stash show --text'
+alias gls='git pull; git submodule update --recursive'
+alias gap='git add -p'
+
+# Will cd into the top of the current repository or submodule.
+grt() {
+  cd $(git rev-parse --show-toplevel || echo ".")
+}
+
+# these alias commit and uncommit wip branches
+alias gwip='git add -A; git ls-files --deleted -z | xargs -0 git rm; git commit -m "--wip--"'
+alias gunwip='git log -n 1 | grep -q -c "\-\-wip\-\-" && git reset HEAD~1'
+
+# List branches sorted by commit date
+branches () {
+	git for-each-ref --format='%(refname)' --sort=-committerdate refs/heads/ | sed -e "s/refs\/heads\///"
+}
+glist () {
+	for ref in $(git for-each-ref --count=50 --sort=-committerdate --format="%(refname)" refs/heads/ refs/remotes ); do git log -n1 $ref --pretty=format:"%Cgreen%cr%Creset %C(yellow)%d%Creset %C(bold blue)<%an>%Creset%n" | cat ; done | awk '! a[$0]++'
+}
+glast () {
+	git for-each-ref --sort=-committerdate refs/heads/ | awk -F 'refs/heads/' '{ print $2; }'
+}
+
+# Repeat command until it fails
+untilfail() {
+	while $* ; do : ; done
+}
+
+# ripgrep with pager
+function rgp {
+	rg -p $* | less -R
+}
+
+# By default, ^S freezes terminal output and ^Q resumes it. Disable that so
+# that those keys can be used for other things.
+unsetopt flowcontrol
+
+# Modern CLI aliases
+alias ls="eza --group-directories-first"
+alias l="eza -l --group-directories-first --git"
+alias la="eza -la --group-directories-first --git"
+alias lt="eza --tree --level=2"
+alias cat="bat --paging=never"
+
+# fzf helpers
+# cd to a directory found by fzf
+cdf() {
+  local dir
+  dir=$(fd --type d --hidden --exclude .git | fzf --preview 'eza --tree --level=1 {}') && cd "$dir"
+}
+
+# edit a file found by fzf
+ef() {
+  local file
+  file=$(fzf --preview 'bat --color=always --line-range=:100 {}') && ${EDITOR:-subl} "$file"
+}
+
+# git checkout branch via fzf
+gcob() {
+  local branch
+  branch=$(git branch --sort=-committerdate --format='%(refname:short)' | fzf --preview 'git log --oneline -20 {}') && git checkout "$branch"
+}
+
+# Directory shortcuts
+alias dev="cd ~/Development"
+
+# Pretty-print JSON
+pj() {
+	jq '.' "$@"
+}

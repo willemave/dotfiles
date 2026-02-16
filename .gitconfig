@@ -1,0 +1,46 @@
+[user]
+	name = Willem Ave
+	email = willem.ave@gmail.com
+[init]
+	defaultBranch = main
+[core]
+	excludesfile = ~/.gitignore
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	side-by-side = true
+	line-numbers = true
+[diff]
+	algorithm = histogram
+	colorMoved = default
+	renames = true
+	indentHeuristic = on
+[status]
+	showUntrackedFiles = all
+[branch]
+	autosetupmerge = true
+	sort = -committerdate
+[column]
+	ui = auto
+[merge]
+	summary = true
+	conflictstyle = zdiff3
+[rebase]
+	autosquash = true
+	autoStash = true
+[fetch]
+	prune = true
+[push]
+	default = current
+	autoSetupRemote = true
+[pull]
+	rebase = true
+[color]
+	ui = auto
+[rerere]
+	enabled = 1
+[include]
+	path = ~/.gitconfig_local
+	path = ~/.gitconfig_alias

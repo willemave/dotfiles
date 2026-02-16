@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+function runDots() {
+    for ARG in "$@"; do
+        if [ "$ARG" == "osxprep" ] || [ "$ARG" == "all" ]; then
+            echo ""
+            echo "------------------------------"
+            echo "Updating macOS and installing Xcode command line tools"
+            echo "------------------------------"
+            echo ""
+            "${SCRIPT_DIR}/osxprep.sh"
+        fi
+
+        if [ "$ARG" == "install" ] || [ "$ARG" == "brew" ] || [ "$ARG" == "all" ]; then
+            echo ""
+            echo "------------------------------"
+            echo "Installing Homebrew packages and applications."
+            echo "------------------------------"
+            echo ""
+            "${SCRIPT_DIR}/install.sh"
+        fi
+
+        if [ "$ARG" == "macos" ] || [ "$ARG" == "osx" ] || [ "$ARG" == "all" ]; then
+            echo ""
+            echo "------------------------------"
+            echo "Applying macOS defaults."
+            echo "------------------------------"
+            echo ""
+            "${SCRIPT_DIR}/macos.sh"
+        fi
+
+        if [ "$ARG" == "web" ] || [ "$ARG" == "all" ]; then
+            echo ""
+            echo "------------------------------"
+            echo "Setting up JavaScript web development environment."
+            echo "------------------------------"
+            echo ""
+            "${SCRIPT_DIR}/web.sh"
+        fi
+    done
+
+    echo "------------------------------"
+    echo "Completed running .dots, restart your computer to ensure all updates take effect"
+    echo "------------------------------"
+}
+
+read -p "This script may overwrite existing files in your home directory. Are you sure? (y/n) " -n 1;
+echo "";
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if [[ $# -eq 0 ]]; then
+        echo "Usage: ./.dots [all|osxprep|install|macos|web]"
+    else
+        runDots "$@"
+    fi
+fi;
+
+unset runDots;

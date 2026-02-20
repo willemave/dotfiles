@@ -62,16 +62,17 @@ defaults write com.apple.dock mru-spaces -bool false
 
 ###############################################################################
 # Safari (developer-focused defaults)
+# NOTE: macOS sandboxes Safari prefs; these may silently fail on recent versions
 ###############################################################################
-defaults write com.apple.Safari UniversalSearchEnabled -bool false
-defaults write com.apple.Safari SuppressSearchSuggestions -bool true
-defaults write com.apple.Safari WebKitTabToLinksPreferenceKey -bool true
-defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks -bool true
-defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
-defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
-defaults write com.apple.Safari IncludeDevelopMenu -bool true
-defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
-defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
+defaults write com.apple.Safari UniversalSearchEnabled -bool false 2>/dev/null || true
+defaults write com.apple.Safari SuppressSearchSuggestions -bool true 2>/dev/null || true
+defaults write com.apple.Safari WebKitTabToLinksPreferenceKey -bool true 2>/dev/null || true
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks -bool true 2>/dev/null || true
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true 2>/dev/null || true
+defaults write com.apple.Safari IncludeInternalDebugMenu -bool true 2>/dev/null || true
+defaults write com.apple.Safari IncludeDevelopMenu -bool true 2>/dev/null || true
+defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true 2>/dev/null || true
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true 2>/dev/null || true
 
 ###############################################################################
 # Activity Monitor + TextEdit
